@@ -11,8 +11,6 @@ function App() {
   const [excelData, setExcelData] = useState(null);
   // it will contain array of objects
 
-  console.log(excelData);
-
   // handle File
   const fileType = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -42,10 +40,19 @@ function App() {
     e.preventDefault();
     if (excelFile !== null) {
       const workbook = XLSX.read(excelFile, { type: "buffer" });
-      const worksheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[worksheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet);
-      setExcelData(data);
+      const sheetNames = workbook.SheetNames;
+      const sheetsData = {};
+
+      sheetNames.forEach((sheetName) => {
+        const sheet = workbook.Sheets[sheetName];
+        const sheetData = XLSX.utils.sheet_to_json(sheet);
+
+        sheetsData[sheetName] = sheetData;
+      });
+      // const worksheetName = workbook.SheetNames[0];
+      // const worksheet = workbook.Sheets[worksheetName];
+      // const data = XLSX.utils.sheet_to_json(worksheet);
+      setExcelData(sheetsData);
     } else {
       setExcelData(null);
     }
